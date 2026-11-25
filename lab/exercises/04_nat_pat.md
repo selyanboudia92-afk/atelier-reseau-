@@ -61,14 +61,14 @@ docker logs --tail 3 lab_internet
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Ils voient l'adresse du routeur grace au nat qui masque celle du client le serveur web pense donc que c'est le routeur qi a fait la requete et nom le client  ._
 
 **Question A.2.** Les adresses `172.20.x.x`, `192.168.x.x` et `10.x.x.x` sont des **adresses privées**
 (voir la fiche). Pourquoi un vrai serveur sur Internet ne pourrait-il pas répondre à une adresse privée ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Se sont des adresses privées qui ne sont pas routable sur internet aucun fournisseurs les utilisent aussi les adresses privée existe en million d'exemplaire a travers le monde on peut donc pas savoir a quelle adresse ip envoyer ._
 
 ---
 
@@ -111,28 +111,28 @@ tcp 6 119 TIME_WAIT src=172.20.1.50 dst=172.20.0.10 sport=52942 dport=80 src=172
 
 | Sens   | IP source | IP destination | Port source | Port destination |
 | ------ | --------- | -------------- | ----------- | ---------------- |
-| Aller  | …         | …              | …           | …                |
-| Retour | …         | …              | …           | …                |
+| Aller  | 172.20.1.147        | 172.20.0.10              | 44370           | 80                |
+| Retour | 172.20.0.10         | 182.20.0.254              | 80           | 44370                |
 
 Dans le sens **retour**, à quelle adresse le serveur répond-il ? Qui fait la traduction vers le client ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Il répond au routeur 172.20.0.254 car il ne peut pas voir le client mais uniquement celle du routeur l'interface WAN  ._
 
 **Question B.2.** Combien de lignes voyez-vous pour vos 3 requêtes ? Les **ports source** sont-ils
 identiques ? Pourquoi est-ce indispensable quand plusieurs PC partagent la même adresse publique ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _J'observe trois lignes une par requete leurs ports source sont 46884, 46898, 46900, et ne sont pas identique. C'est indispensable pour le routeur car il a besoient de savoir quelle machine faut-il envoyer la réponse car il associe un port a une requete ._
 
 **Question B.3.** On parle de **PAT** (*Port Address Translation*) quand plusieurs machines partagent
 **une seule** IP publique grâce aux ports. Notre routeur fait-il du NAT simple ou du PAT ? Justifiez.
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Notre routeur fait du pat car il traduit toutes les connexions avec une seuls ip et distingue les flux grace aux numéros de port  ._
 
 ---
 
@@ -173,14 +173,14 @@ docker logs --tail 3 lab_internet
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Du coté client la requete ne fonctionne plus et aucune nouvelle ligne du cote serveur web car il n'a recu aucune requete de la part du cliet  ._
 
 **Question C.2.** Dans la capture côté WAN, quelle **IP source** porte le paquet `[S]` (SYN) qui sort ?
 Le paquet **aller** est bien parti : pourquoi la **réponse** ne revient-elle jamais au client ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Coté Wan c'est l'adresse privé du client qui essaie de sortir de l'interface car le nat est d'esactiver mais étant donner que c'est une ip privée le serveur dispose de aucune route pour envoyer sa réponse ._
 
 ### Étape 9 — Réparer
 
@@ -207,20 +207,20 @@ le serveur web **et** de sa réponse, en indiquant à quel moment l'adresse est 
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Le client envoie sa requête vers le serveur web avec son adresse IP privée en source, en passant par le routeur. Au moment de sortir sur l'interface WAN, le routeur traduit l'adresse IP source et e port par sa propre adresse IP externe Le serveur web reçoit donc la requête comme venant du routeur et lui renvoie sa réponse. À la réception, le routeur consulte sa table de traduction pour remplacer l'adresse de destination par l'IP privée d'origine du client et lui transmettre le paquet._
 
 **Question D.2.** Chez vous, combien d'adresses IP publiques votre box possède-t-elle en général ?
 Combien d'appareils l'utilisent ? Quel mécanisme rend cela possible ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Elle possède en génerale une seule pour environs 8 appareilles qui l'utilisent cela est possible grace au nat/pat qui permet d'utiliser qu'une seule adresse publique._
 
 **Question D.3.** Pourquoi le NAT a-t-il été inventé ? (Indice : combien existe-t-il d'adresses IPv4 au total ?)
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Il a été inventer comme solution temporaire a la quantité limité d'adresse ipv4 qui sont seulement aux nombres de 2 puissance 32, le nat permet donc de pouvoir utiliser les réseaux locale pour qu'ils puissent utilisés une seule adresse publique._
 
 ---
 
