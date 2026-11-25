@@ -47,7 +47,7 @@ ping -c 2 172.20.1.254
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Car nous avons supprimer l'adresse Ip du client il ne peut donc plus communiquer avec le routeur._
 
 ---
 
@@ -89,7 +89,11 @@ Qui vous l'a donnée ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _DHCPDISCOVER on eth0 to 255.255.255.255 port 67 interval 3
+DHCPOFFER of 172.20.1.147 from 172.20.1.2
+DHCPREQUEST for 172.20.1.147 on eth0 to 255.255.255.255 port 67
+DHCPACK of 172.20.1.147 from 172.20.1.2
+bound to 172.20.1.147 -- renewal in 18290 seconds._
 
 ### Étape 5 — Analyser les 4 messages
 
@@ -112,26 +116,26 @@ Qui vous l'a donnée ?
 
 | Étape       | IP source | IP destination    | MAC destination   | Type DHCP (opt 53) | Transaction ID |
 | ----------- | --------- | ----------------- | ----------------- | ------------------ | -------------- |
-| 1. Discover | `0.0.0.0` | `255.255.255.255` | …                 | …                  | …              |
-| 2. Offer    | …         | …                 | …                 | …                  | …              |
-| 3. Request  | …         | …                 | …                 | …                  | …              |
-| 4. ACK      | …         | …                 | …                 | …                  | …              |
+| 1. Discover | `0.0.0.0` | `255.255.255.255` | ff:ff:ff:ff:ff:ff              | Discover             | 0x2daead74              |
+| 2. Offer    | 172.20.1.2         | 172.20.1.147                 | fe:b8:ec:36:77:63                 | Offer                 | 0x2daead74              |
+| 3. Request  | 0.0.0.0         | 255.255.255.255                 | ff:ff:ff:ff:ff:ff                 | Request                  | 0x2daead74              |
+| 4. ACK      | 172.20.1.2         | 172.20.1.147                 | fe:b8:ec:36:77:63                 | ACK                  | 0x2daead74              |
 
 **Question B.3.** Dans le paquet **Offer** (n°2), relevez la configuration proposée par le serveur :
 
 | Information              | Option DHCP | Valeur |
 | ------------------------ | ----------- | ------ |
-| Adresse IP proposée      | (yiaddr)    | …      |
-| Masque de sous-réseau    | 1           | …      |
-| Passerelle (routeur)     | 3           | …      |
-| Serveurs DNS             | 6           | …      |
-| Durée du bail (secondes) | 51          | …      |
+| Adresse IP proposée      | (yiaddr)    | 172.20.1.147     |
+| Masque de sous-réseau    | 1           | 255.255.255.0     |
+| Passerelle (routeur)     | 3           | 172.20.1.254      |
+| Serveurs DNS             | 6           | 1.1.1.1, 8.8.8.8      |
+| Durée du bail (secondes) | 51          | 43200      |
 
 Convertissez la durée du bail en heures.
 
 > 💬 **Votre réponse (conversion) :**
 >
-> _Remplacez ce texte par votre réponse._
+> _12H._
 
 ---
 
@@ -153,7 +157,7 @@ question B.3 ? Le ping vers le routeur fonctionne-t-il à nouveau ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Le ping vers le routeur fonctionne car nous avons la configuration réseau._
 
 ### Étape 7 — Le point de vue du serveur
 
@@ -173,7 +177,13 @@ a-t-il associée à l'IP attribuée ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Oui, on retrouve exactement les mêmes paramètres réseau que ceux proposés par le serveur DHCP dans le paquet Offer (question B.3) :
+
+ip addr : l'interface eth0 a bien reçu l'adresse IP 172.20.1.147/24 (soit le masque 255.255.255.0).
+
+ip route : la passerelle par défaut configurée est bien 172.20.1.254 (default via 172.20.1.254 dev eth0).
+
+/etc/resolv.conf : les serveurs DNS configurés sont bien 1.1.1.1 et 8.8.8.8.._
 
 ---
 
@@ -183,28 +193,28 @@ a-t-il associée à l'IP attribuée ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _0.0.0.0 est utiliser pour dire que c'est une adresse non spécifier  pour communiquer avec le serveur car il ne poss._
 
 **Question D.2.** Pourquoi le Discover est-il envoyé à `255.255.255.255` et à la MAC `ff:ff:ff:ff:ff:ff` ?
 Que signifient ces adresses ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Les deux sont utiliser pour les broadcasts ._
 
 **Question D.3.** À quoi sert le **Transaction ID**, identique dans les 4 messages ?
 (Imaginez 30 PC qui démarrent en même temps sur le même réseau.)
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _Il permet à chaque client d'identifier les messages qui lui sont destinés. Si 30 PC démarrent en même temps, chaque machine utilise son propre Transaction ID unique pour ignorer les réponses destinées aux autres.._
 
 **Question D.4.** Que se passe-t-il quand le **bail expire** ? Pourquoi les baux ont-ils une durée
 limitée plutôt qu'infinie ?
 
 > 💬 **Votre réponse :**
 >
-> _Remplacez ce texte par votre réponse._
+> _À l'expiration du bail (sans renouvellement), le client perd son IP et doit recommencer un cycle DORA complet. La durée est limitée pour recycler automatiquement les adresses des appareils déconnectés et éviter la pénurie d'IP sur le réseau._
 
 ---
 
